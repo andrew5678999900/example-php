@@ -1,5 +1,5 @@
 <?php
-chmod 666 spells.json
+chmod(666, 'spells.json'); // Ensure file permissions are set correctly
 
 // Backend logic for handling requests
 $filePath = 'spells.json';
@@ -50,7 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     exit;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
