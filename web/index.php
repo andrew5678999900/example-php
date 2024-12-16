@@ -94,8 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         border-radius: 5px;
     }
 </style>
-</head>
-<body>
+
 <h1>D&D Spell Creator</h1>
 <div class="form-container">
     <h2>Create a Spell</h2>
@@ -194,5 +193,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // Load spells on page load
     window.onload = displaySpells;
 </script>
-</body>
-</html>
+
