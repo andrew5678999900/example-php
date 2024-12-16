@@ -127,72 +127,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 </div>
 
 <script>
-// Save spell to the server
-function saveSpell() {
-    const spell = {
-        name: document.getElementById("name").value.trim(),
-        level: parseInt(document.getElementById("level").value.trim(), 10),
-        type: document.getElementById("type").value.trim(),
-        effect: parseInt(document.getElementById("effect").value.trim(), 10),
-        description: document.getElementById("description").value.trim(),
-        components: document.getElementById("components").value.trim()
-    };
+    // Save spell to the server
+    function saveSpell() {
+        const spell = {
+            name: document.getElementById("name").value.trim(),
+            level: parseInt(document.getElementById("level").value.trim(), 10),
+            type: document.getElementById("type").value.trim(),
+            effect: parseInt(document.getElementById("effect").value.trim(), 10),
+            description: document.getElementById("description").value.trim(),
+            components: document.getElementById("components").value.trim()
+        };
 
-    // Validate inputs
-    if (!spell.name || isNaN(spell.level) || spell.level < 1 || spell.level > 9 || !spell.type || isNaN(spell.effect) || !spell.description || !spell.components) {
-        alert("Please fill out all fields correctly. Level must be between 1 and 9.");
-        return;
+        // Validate inputs
+        if (!spell.name || isNaN(spell.level) || spell.level < 1 || spell.level > 9 || !spell.type || isNaN(spell.effect) || !spell.description || !spell.components) {
+            alert("Please fill out all fields correctly. Level must be between 1 and 9.");
+            return;
+        }
+
+        fetch(window.location.href, { // Same file handles saving
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(spell)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Spell saved successfully!");
+                displaySpells(); // Refresh spellbook
+                document.getElementById("spellForm").reset(); // Clear form
+            } else {
+                alert("Failed to save spell: " + data.message);
+            }
+        })
+        .catch(error => alert("Error: " + error.message));
     }
 
-    fetch(window.location.href, { // Same file handles saving
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(spell)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert("Spell saved successfully!");
-            displaySpells(); // Refresh spellbook
-            document.getElementById("spellForm").reset(); // Clear form
-        } else {
-            alert("Failed to save spell: " + data.message);
-        }
-    })
-    .catch(error => alert("Error: " + error.message));
-}
+    // Fetch and display spells
+    function displaySpells() {
+        fetch(window.location.href)
+            .then(response => response.json())
+            .then(spells => {
+                if (!Array.isArray(spells)) {
+                    alert("Invalid data received.");
+                    return;
+                }
 
-// Fetch and display spells
-function displaySpells() {
-    fetch(window.location.href)
-        .then(response => response.json())
-        .then(spells => {
-            if (!Array.isArray(spells)) {
-                alert("Invalid data received.");
-                return;
-            }
+                const spellList = document.getElementById('spellList');
+                spellList.innerHTML = '<h2>Spellbook</h2>'; // Reset list
 
-            const spellList = document.getElementById('spellList');
-            spellList.innerHTML = '<h2>Spellbook</h2>'; // Reset list
+                spells.forEach(spell => {
+                    const spellItem = document.createElement('div');
+                    spellItem.classList.add('spell-item');
+                    spellItem.innerHTML = `
+                        <h3>${spell.name} (Level ${spell.level})</h3>
+                        <p><strong>Type:</strong> ${spell.type}</p>
+                        <p><strong>Effect:</strong> ${spell.effect}</p>
+                        <p><strong>Description:</strong> ${spell.description}</p>
+                        <p><strong>Components:</strong> ${spell.components}</p>
+                    `;
+                    spellList.appendChild(spellItem);
+                });
+            })
+            .catch(error => alert('Failed to fetch spells: ' + error.message));
+    }
 
-            spells.forEach(spell => {
-                const spellItem = document.createElement('div');
-                spellItem.classList.add('spell-item');
-                spellItem.innerHTML = `
-                    <h3>${spell.name} (Level ${spell.level})</h3>
-                    <p><strong>Type:</strong> ${spell.type}</p>
-                    <p><strong>Effect:</strong> ${spell.effect}</p>
-                    <p><strong>Description:</strong> ${spell.description}</p>
-                    <p><strong>Components:</strong> ${spell.components}</p>
-                `;
-                spellList.appendChild(spellItem);
-            });
-        })
-        .catch(error => alert('Failed to fetch spells: ' + error.message));
-}
-
-// Load spells on page load
-window.onload = displaySpells;
+    // Load spells on page load
+    window.onload = displaySpells;
 </script>
 </body>
 </html>
