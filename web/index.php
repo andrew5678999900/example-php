@@ -1,4 +1,6 @@
 <?php
+chmod 666 spells.json
+
 // Backend logic for handling requests
 $filePath = 'spells.json';
 
