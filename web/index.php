@@ -1,55 +1,5 @@
-<?php
-chmod(666, 'spells.json'); // Ensure file permissions are set correctly
 
-// Backend logic for handling requests
-$filePath = 'spells.json';
 
-// Handle saving spells
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    header("Content-Type: application/json");
-    $input = json_decode(file_get_contents('php://input'), true);
-
-    if (isset($input['name'], $input['level'], $input['type'], $input['effect'], $input['description'], $input['components'])) {
-        $spell = [
-            'name' => htmlspecialchars($input['name']),
-            'level' => intval($input['level']),
-            'type' => htmlspecialchars($input['type']),
-            'effect' => intval($input['effect']),
-            'description' => htmlspecialchars($input['description']),
-            'components' => htmlspecialchars($input['components']),
-        ];
-
-        // Load existing spells
-        $spells = [];
-        if (file_exists($filePath)) {
-            $spells = json_decode(file_get_contents($filePath), true) ?: [];
-        }
-
-        $spells[] = $spell;
-
-        // Save spells to file
-        if (file_put_contents($filePath, json_encode($spells, JSON_PRETTY_PRINT))) {
-            echo json_encode(['success' => true]);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Failed to save spell']);
-        }
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Invalid input']);
-    }
-    exit;
-}
-
-// Handle fetching spells
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    header("Content-Type: application/json");
-    if (file_exists($filePath)) {
-        echo file_get_contents($filePath);
-    } else {
-        echo json_encode([]);
-    }
-    exit;
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -129,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 </div>
 
 <script>
-    // Save spell to the server
+    // Save spell to localStorage
     function saveSpell() {
         const spell = {
             name: document.getElementById("name").value.trim(),
@@ -146,52 +96,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             return;
         }
 
-        fetch(window.location.href, { // Same file handles saving
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(spell)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert("Spell saved successfully!");
-                displaySpells(); // Refresh spellbook
-                document.getElementById("spellForm").reset(); // Clear form
-            } else {
-                alert("Failed to save spell: " + data.message);
-            }
-        })
-        .catch(error => alert("Error: " + error.message));
+        let spells = JSON.parse(localStorage.getItem('spells')) || [];
+        spells.push(spell);
+        localStorage.setItem('spells', JSON.stringify(spells));
+
+        alert("Spell saved successfully!");
+        displaySpells(); // Refresh spellbook
+        document.getElementById("spellForm").reset(); // Clear form
     }
 
-    // Fetch and display spells
+    // Fetch and display spells from localStorage
     function displaySpells() {
-        fetch(window.location.href)
-            .then(response => response.json())
-            .then(spells => {
-                if (!Array.isArray(spells)) {
-                    alert("Invalid data received.");
-                    return;
-                }
+        const spells = JSON.parse(localStorage.getItem('spells')) || [];
+        const spellList = document.getElementById('spellList');
+        spellList.innerHTML = '<h2>Spellbook</h2>'; // Reset list
 
-                const spellList = document.getElementById('spellList');
-                spellList.innerHTML = '<h2>Spellbook</h2>'; // Reset list
-
-                spells.forEach(spell => {
-                    const spellItem = document.createElement('div');
-                    spellItem.classList.add('spell-item');
-                    spellItem.innerHTML = `
-                        <h3>${spell.name} (Level ${spell.level})</h3>
-                        <p><strong>Type:</strong> ${spell.type}</p>
-                        <p><strong>Effect:</strong> ${spell.effect}</p>
-                        <p><strong>Description:</strong> ${spell.description}</p>
-                        <p><strong>Components:</strong> ${spell.components}</p>
-                    `;
-                    spellList.appendChild(spellItem);
-                });
-            })
-            .catch(error => alert('Failed to fetch spells: ' + error.message));
+        spells.forEach(spell => {
+            const spellItem = document.createElement('div');
+            spellItem.classList.add('spell-item');
+            spellItem.innerHTML = `
+                <h3>${spell.name} (Level ${spell.level})</h3>
+                <p><strong>Type:</strong> ${spell.type}</p>
+                <p><strong>Effect:</strong> ${spell.effect}</p>
+                <p><strong>Description:</strong> ${spell.description}</p>
+                <p><strong>Components:</strong> ${spell.components}</p>
+            `;
+            spellList.appendChild(spellItem);
+        });
     }
+<?php
+header("Content-Type: application/json");
+
+// Handle fetching spells
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    header("Content-Type: application/json");
+    $spells = json_decode(localStorage.getItem('spells')) ?: [];
+    echo json_encode($spells);
+    exit;
+}
+?>
 
     // Load spells on page load
     window.onload = displaySpells;
