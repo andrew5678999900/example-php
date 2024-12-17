@@ -124,6 +124,12 @@
             spellList.appendChild(spellItem);
         });
     }
+
+    // Load spells on page load
+    window.onload = displaySpells;
+</script>
+</body>
+</html>
 <?php
 header("Content-Type: application/json");
 
@@ -136,8 +142,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 }
 ?>
 
-    // Load spells on page load
-    window.onload = displaySpells;
-</script>
-</body>
-</html>
