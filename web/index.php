@@ -56,7 +56,7 @@
         <input type="text" id="name" placeholder="Enter spell name" required>
 
         <label for="level">Spell Level:</label>
-        <input type="number" id="level" placeholder="Enter spell level (1-9)" required>
+        <input type="number" id="level" placeholder="Enter spell level (1-100)" required>
 
         <label for="type">Spell Type:</label>
         <input type="text" id="type" placeholder="Enter spell type (e.g., Fire, Ice)" required>
@@ -91,7 +91,7 @@
         };
 
         // Validate inputs
-        if (!spell.name || isNaN(spell.level) || spell.level < 1 || spell.level > 9 || !spell.type || isNaN(spell.effect) || !spell.description || !spell.components) {
+        if (!spell.name || isNaN(spell.level) || spell.level < 1 || spell.level > 100 || !spell.type || isNaN(spell.effect) || !spell.description || !spell.components) {
             alert("Please fill out all fields correctly. Level must be between 1 and 9.");
             return;
         }
