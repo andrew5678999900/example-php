@@ -5,17 +5,6 @@ $port = '5432'; // Default PostgreSQL port
 $dbname = 'koyebdb'; // Replace with your database name
 $user = 'koyeb-adm'; // Replace with your database username
 $password = 'qY2trVhBe9KS'; // Replace with your database password
-CREATE TABLE spells (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    level INT NOT NULL,
-    type VARCHAR(255) NOT NULL,
-    effect INT NOT NULL,
-    description TEXT NOT NULL,
-    components VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
 // Create a connection string
 $dsn = "pgsql:host=$host;port=$port;dbname=$dbname";
