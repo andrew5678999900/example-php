@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -79,8 +77,9 @@
 </div>
 
 <script>
-    // Save spell to localStorage
-    function saveSpell() {
+    const API_URL = 'https://your-server-endpoint/api/spells';
+
+    async function saveSpell() {
         const spell = {
             name: document.getElementById("name").value.trim(),
             level: parseInt(document.getElementById("level").value.trim(), 10),
@@ -90,55 +89,61 @@
             components: document.getElementById("components").value.trim()
         };
 
-        // Validate inputs
         if (!spell.name || isNaN(spell.level) || spell.level < 1 || spell.level > 100 || !spell.type || isNaN(spell.effect) || !spell.description || !spell.components) {
-            alert("Please fill out all fields correctly. Level must be between 1 and 9.");
+            alert("Please fill out all fields correctly. Level must be between 1 and 100.");
             return;
         }
 
-        let spells = JSON.parse(localStorage.getItem('spells')) || [];
-        spells.push(spell);
-        localStorage.setItem('spells', JSON.stringify(spells));
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(spell)
+            });
 
-        alert("Spell saved successfully!");
-        displaySpells(); // Refresh spellbook
-        document.getElementById("spellForm").reset(); // Clear form
+            if (!response.ok) {
+                throw new Error('Failed to save spell');
+            }
+
+            alert("Spell saved successfully!");
+            displaySpells(); // Refresh spellbook
+            document.getElementById("spellForm").reset(); // Clear form
+        } catch (error) {
+            alert("Error saving spell: " + error.message);
+        }
     }
 
-    // Fetch and display spells from localStorage
-    function displaySpells() {
-        const spells = JSON.parse(localStorage.getItem('spells')) || [];
-        const spellList = document.getElementById('spellList');
-        spellList.innerHTML = '<h2>Spellbook</h2>'; // Reset list
+    async function displaySpells() {
+        try {
+            const response = await fetch(API_URL);
+            if (!response.ok) {
+                throw new Error('Failed to fetch spells');
+            }
 
-        spells.forEach(spell => {
-            const spellItem = document.createElement('div');
-            spellItem.classList.add('spell-item');
-            spellItem.innerHTML = `
-                <h3>${spell.name} (Level ${spell.level})</h3>
-                <p><strong>Type:</strong> ${spell.type}</p>
-                <p><strong>Effect:</strong> ${spell.effect}</p>
-                <p><strong>Description:</strong> ${spell.description}</p>
-                <p><strong>Components:</strong> ${spell.components}</p>
-            `;
-            spellList.appendChild(spellItem);
-        });
+            const spells = await response.json();
+            const spellList = document.getElementById('spellList');
+            spellList.innerHTML = '<h2>Spellbook</h2>';
+
+            spells.forEach(spell => {
+                const spellItem = document.createElement('div');
+                spellItem.classList.add('spell-item');
+                spellItem.innerHTML = `
+                    <h3>${spell.name} (Level ${spell.level})</h3>
+                    <p><strong>Type:</strong> ${spell.type}</p>
+                    <p><strong>Effect:</strong> ${spell.effect}</p>
+                    <p><strong>Description:</strong> ${spell.description}</p>
+                    <p><strong>Components:</strong> ${spell.components}</p>
+                `;
+                spellList.appendChild(spellItem);
+            });
+        } catch (error) {
+            alert("Error fetching spells: " + error.message);
+        }
     }
 
-    // Load spells on page load
     window.onload = displaySpells;
 </script>
 </body>
 </html>
-<?php
-header("Content-Type: application/json");
-
-// Handle fetching spells
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    header("Content-Type: application/json");
-    $spells = json_decode(localStorage.getItem('spells')) ?: [];
-    echo json_encode($spells);
-    exit;
-}
-?>
-
