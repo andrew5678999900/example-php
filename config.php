@@ -1,11 +1,5 @@
 <?php
-return [
-    'db_host' => 'ep-soft-lake-a2br8hlw.eu-central-1.pg.koyeb.app',
-    'db_port' => '5432', // Default PostgreSQL port
-    'db_name' => 'koyebdb',
-    'db_user' => 'koyeb-adm',
-    'db_pass' => 'qY2trVhBe9KS',
-    CREATE TABLE spells (
+CREATE TABLE spells (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     level INT NOT NULL,
@@ -16,6 +10,14 @@ return [
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+return [
+
+    'db_host' => 'ep-soft-lake-a2br8hlw.eu-central-1.pg.koyeb.app',
+    'db_port' => '5432', // Default PostgreSQL port
+    'db_name' => 'koyebdb',
+    'db_user' => 'koyeb-adm',
+    'db_pass' => 'qY2trVhBe9KS',
+
 
 ];
 <?php
