@@ -74,6 +74,15 @@
 
 <div class="spellbook" id="spellList">
     <h2>Spellbook</h2>
+    <?php foreach ($spells as $spell): ?>
+        <div class="spell-item">
+            <h3><?= htmlspecialchars($spell['name']) ?> (Level <?= htmlspecialchars($spell['level']) ?>)</h3>
+            <p><strong>Type:</strong> <?= htmlspecialchars($spell['type']) ?></p>
+            <p><strong>Effect:</strong> <?= htmlspecialchars($spell['effect']) ?></p>
+            <p><strong>Description:</strong> <?= htmlspecialchars($spell['description']) ?></p>
+            <p><strong>Components:</strong> <?= htmlspecialchars($spell['components']) ?></p>
+        </div>
+    <?php endforeach; ?>
 </div>
 
 <script>
@@ -138,138 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     echo json_encode($spells);
     exit;
 }
-? 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+? >
 <?php
 // Database connection parameters
 $host = 'ep-soft-lake-a2br8hlw.eu-central-1.pg.koyeb.app';
@@ -294,15 +172,4 @@ try {
     $spells = [];
 }
 ?>
-<div class="spellbook" id="spellList">
-    <h2>Spellbook</h2>
-    <?php foreach ($spells as $spell): ?>
-        <div class="spell-item">
-            <h3><?= htmlspecialchars($spell['name']) ?> (Level <?= htmlspecialchars($spell['level']) ?>)</h3>
-            <p><strong>Type:</strong> <?= htmlspecialchars($spell['type']) ?></p>
-            <p><strong>Effect:</strong> <?= htmlspecialchars($spell['effect']) ?></p>
-            <p><strong>Description:</strong> <?= htmlspecialchars($spell['description']) ?></p>
-            <p><strong>Components:</strong> <?= htmlspecialchars($spell['components']) ?></p>
-        </div>
-    <?php endforeach; ?>
-</div>
+
